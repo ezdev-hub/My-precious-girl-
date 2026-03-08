@@ -3,17 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi niña ❤️</title>
+<title>Para ti ❤️</title>
 
 <style>
 
 body{
 margin:0;
-overflow:hidden;
-font-family:Arial, sans-serif;
+font-family:Arial;
+background:#b30000;
 color:white;
 text-align:center;
-background:#b30000;
+overflow:hidden;
+}
+
+.screen{
+position:fixed;
+width:100%;
+height:100%;
+top:0;
+left:0;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+}
+
+.hidden{
+display:none;
+}
+
+button{
+padding:15px 25px;
+font-size:18px;
+border:none;
+border-radius:20px;
+background:white;
+color:#b30000;
+font-weight:bold;
+}
+
+.game-area{
+position:relative;
+width:100%;
+height:70%;
+}
+
+.item{
+position:absolute;
+font-size:35px;
+cursor:pointer;
 }
 
 .background{
@@ -23,8 +61,8 @@ left:0;
 width:100%;
 height:100%;
 object-fit:cover;
-z-index:0;
 opacity:0.35;
+z-index:0;
 }
 
 .message{
@@ -39,14 +77,11 @@ z-index:2;
 
 .touch{
 position:fixed;
-bottom:40px;
+bottom:15px;
 left:50%;
 transform:translateX(-50%);
-font-size:20px;
+font-size:18px;
 font-weight:bold;
-background:rgba(0,0,0,0.4);
-padding:10px 20px;
-border-radius:20px;
 z-index:3;
 }
 
@@ -60,9 +95,7 @@ pointer-events:none;
 }
 
 @keyframes fall{
-to{
-transform:translateY(110vh);
-}
+to{transform:translateY(110vh);}
 }
 
 .burst{
@@ -74,20 +107,34 @@ z-index:5;
 }
 
 @keyframes explode{
-from{
-transform:scale(0.5);
-opacity:1;
-}
-to{
-transform:translate(var(--x),var(--y)) scale(1.5);
-opacity:0;
-}
+from{transform:scale(0.5);opacity:1;}
+to{transform:translate(var(--x),var(--y)) scale(1.5);opacity:0;}
 }
 
 </style>
 </head>
 
 <body>
+
+<div id="game1" class="screen">
+<h2>Juego 1</h2>
+<p>Atrapa 5 corazones ❤️</p>
+<div class="game-area" id="area1"></div>
+</div>
+
+<div id="game2" class="screen hidden">
+<h2>Juego 2</h2>
+<p>Toca 5 arañas 🕷️</p>
+<div class="game-area" id="area2"></div>
+</div>
+
+<div id="game3" class="screen hidden">
+<h2>Juego 3</h2>
+<p>Encuentra el corazón correcto ❤️</p>
+<div class="game-area" id="area3"></div>
+</div>
+
+<div id="final" class="hidden">
 
 <img src="espiderman.jpg" class="background">
 
@@ -96,15 +143,15 @@ opacity:0;
 <h2>Mi niña 💖</h2>
 
 <p>
-Solo quería que supieras algo que para mí es muy importante decirte. Desde que llegaste a mi vida todo se siente diferente, más bonito y más especial. A veces puede que no encuentre las palabras perfectas para explicarlo, pero quiero que recuerdes siempre que eres alguien muy importante para mí.
+Solo quería que supieras algo muy importante para mí. Desde que llegaste a mi vida todo se siente diferente, más bonito y más especial. Puede que a veces no encuentre las palabras perfectas, pero quiero que siempre recuerdes que eres alguien muy importante para mí.
 </p>
 
 <p>
-Tu forma de ser, tu sonrisa y la manera en que hablas conmigo hacen que incluso los días normales se sientan mejores. Me gusta pensar que en este mundo tan grande tuve la suerte de encontrarte, porque no todos los días aparece alguien que te haga sentir tranquilo, feliz y querido al mismo tiempo.
+Tu sonrisa, tu forma de ser y la manera en que hablas conmigo hacen que incluso los días normales se sientan mejores. Me siento muy afortunado de haberte encontrado en este mundo tan grande.
 </p>
 
 <p>
-Aunque a veces no lo diga tanto como debería, quiero que sepas que te aprecio muchísimo, que me encanta hablar contigo, reír contigo y simplemente saber que estás ahí. Así que nunca olvides esto: eres especial, eres importante y haces mi mundo un poquito más bonito con solo existir. ❤️
+Así que nunca olvides esto: eres especial, eres importante y haces mi mundo mucho más bonito con solo existir. ❤️
 </p>
 
 </div>
@@ -113,62 +160,164 @@ Aunque a veces no lo diga tanto como debería, quiero que sepas que te aprecio m
 
 <audio id="music" src="Beso.mp3"></audio>
 
+</div>
+
 <script>
 
-const items = [
-"🕷️","🕸️","❤️","💙",
-"Te quiero",
-"Mi niña",
-"Mi amor",
-"Preciosa",
-"Linda",
-"Bonita",
-"Eres especial",
-"Te adoro"
-];
+let hearts=0
+let spiders=0
 
-function createFall(){
-const element=document.createElement("div");
-element.classList.add("fall");
-element.innerHTML = items[Math.floor(Math.random()*items.length)];
-element.style.left=Math.random()*100+"vw";
-element.style.animationDuration=(10+Math.random()*6)+"s";
-document.body.appendChild(element);
-setTimeout(()=>{element.remove();},16000);
+function randomPos(){
+return {
+x:Math.random()*80+10,
+y:Math.random()*60+10
+}
 }
 
-setInterval(createFall,900);
+function spawnHeart(){
+const heart=document.createElement("div")
+heart.className="item"
+heart.innerHTML="❤️"
 
-document.addEventListener("click",burstEffect);
-document.addEventListener("touchstart",burstEffect);
+const pos=randomPos()
 
-function burstEffect(e){
+heart.style.left=pos.x+"%"
+heart.style.top=pos.y+"%"
 
-document.getElementById("music").play();
+heart.onclick=()=>{
+heart.remove()
+hearts++
 
-const x = e.touches ? e.touches[0].clientX : e.clientX;
-const y = e.touches ? e.touches[0].clientY : e.clientY;
+if(hearts>=5){
+document.getElementById("game1").classList.add("hidden")
+document.getElementById("game2").classList.remove("hidden")
+}else{
+spawnHeart()
+}
+}
 
-const burstItems = ["🕷️","🕸️","❤️","💙"];
+document.getElementById("area1").appendChild(heart)
+}
+
+spawnHeart()
+
+function spawnSpider(){
+const spider=document.createElement("div")
+spider.className="item"
+spider.innerHTML="🕷️"
+
+const pos=randomPos()
+
+spider.style.left=pos.x+"%"
+spider.style.top=pos.y+"%"
+
+spider.onclick=()=>{
+spider.remove()
+spiders++
+
+if(spiders>=5){
+document.getElementById("game2").classList.add("hidden")
+document.getElementById("game3").classList.remove("hidden")
+createHearts()
+}else{
+spawnSpider()
+}
+}
+
+document.getElementById("area2").appendChild(spider)
+}
+
+spawnSpider()
+
+function createHearts(){
+
+for(let i=0;i<6;i++){
+
+const h=document.createElement("div")
+h.className="item"
+
+if(i==3){
+h.innerHTML="💖"
+h.onclick=finishGames
+}else{
+h.innerHTML="❤️"
+}
+
+const pos=randomPos()
+
+h.style.left=pos.x+"%"
+h.style.top=pos.y+"%"
+
+document.getElementById("area3").appendChild(h)
+
+}
+
+}
+
+function finishGames(){
+
+document.getElementById("game3").classList.add("hidden")
+document.getElementById("final").classList.remove("hidden")
+
+startFinal()
+
+}
+
+function startFinal(){
+
+const items=["🕷️","🕸️","❤️","💙","Te quiero","Mi niña","Mi amor","Preciosa"]
+
+function createFall(){
+
+const el=document.createElement("div")
+el.className="fall"
+el.innerHTML=items[Math.floor(Math.random()*items.length)]
+el.style.left=Math.random()*100+"vw"
+el.style.animationDuration=(10+Math.random()*6)+"s"
+
+document.body.appendChild(el)
+
+setTimeout(()=>{el.remove()},16000)
+
+}
+
+setInterval(createFall,900)
+
+document.addEventListener("click",burst)
+document.addEventListener("touchstart",burst)
+
+}
+
+function burst(e){
+
+document.querySelector(".touch").style.display="none"
+
+document.getElementById("music").play()
+
+const x=e.touches?e.touches[0].clientX:e.clientX
+const y=e.touches?e.touches[0].clientY:e.clientY
+
+const items=["🕷️","🕸️","❤️","💙"]
 
 for(let i=0;i<16;i++){
 
-const part=document.createElement("div");
-part.classList.add("burst");
-part.innerHTML=burstItems[Math.floor(Math.random()*burstItems.length)];
+const p=document.createElement("div")
+p.className="burst"
 
-part.style.left=x+"px";
-part.style.top=y+"px";
+p.innerHTML=items[Math.floor(Math.random()*items.length)]
 
-const moveX=(Math.random()*240-120)+"px";
-const moveY=(Math.random()*240-120)+"px";
+p.style.left=x+"px"
+p.style.top=y+"px"
 
-part.style.setProperty("--x",moveX);
-part.style.setProperty("--y",moveY);
+const mx=(Math.random()*240-120)+"px"
+const my=(Math.random()*240-120)+"px"
 
-document.body.appendChild(part);
+p.style.setProperty("--x",mx)
+p.style.setProperty("--y",my)
 
-setTimeout(()=>{part.remove();},1200);
+document.body.appendChild(p)
+
+setTimeout(()=>{p.remove()},1200)
 
 }
 
