@@ -32,16 +32,6 @@ justify-content:center;
 display:none;
 }
 
-button{
-padding:15px 25px;
-font-size:18px;
-border:none;
-border-radius:20px;
-background:white;
-color:#b30000;
-font-weight:bold;
-}
-
 .game-area{
 position:relative;
 width:100%;
@@ -52,6 +42,7 @@ height:70%;
 position:absolute;
 font-size:35px;
 cursor:pointer;
+user-select:none;
 }
 
 .background{
@@ -129,7 +120,7 @@ to{transform:translate(var(--x),var(--y)) scale(1.5);opacity:0;}
 </div>
 
 <div id="game3" class="screen hidden">
-<h2>Juego 3</h2>
+<h2 id="nivelTexto">Juego 3 - Nivel 1</h2>
 <p>Encuentra el corazón correcto ❤️</p>
 <div class="game-area" id="area3"></div>
 </div>
@@ -143,15 +134,15 @@ to{transform:translate(var(--x),var(--y)) scale(1.5);opacity:0;}
 <h2>Mi niña 💖</h2>
 
 <p>
-Solo quería que supieras algo muy importante para mí. Desde que llegaste a mi vida todo se siente diferente, más bonito y más especial. Puede que a veces no encuentre las palabras perfectas, pero quiero que siempre recuerdes que eres alguien muy importante para mí.
+Solo quería que supieras algo muy importante para mí. Desde que llegaste a mi vida todo se siente diferente, más bonito y más especial.
 </p>
 
 <p>
-Tu sonrisa, tu forma de ser y la manera en que hablas conmigo hacen que incluso los días normales se sientan mejores. Me siento muy afortunado de haberte encontrado en este mundo tan grande.
+Tu sonrisa y tu forma de ser hacen que incluso los días normales se sientan mejores. Me siento muy afortunado de haberte encontrado.
 </p>
 
 <p>
-Así que nunca olvides esto: eres especial, eres importante y haces mi mundo mucho más bonito con solo existir. ❤️
+Nunca olvides esto: eres especial y haces mi mundo mucho más bonito con solo existir. ❤️
 </p>
 
 </div>
@@ -166,6 +157,9 @@ Así que nunca olvides esto: eres especial, eres importante y haces mi mundo muc
 
 let hearts=0
 let spiders=0
+let heartSpeed=800
+let spiderSpeed=800
+let level=1
 
 function randomPos(){
 return {
@@ -175,6 +169,7 @@ y:Math.random()*60+10
 }
 
 function spawnHeart(){
+
 const heart=document.createElement("div")
 heart.className="item"
 heart.innerHTML="❤️"
@@ -184,9 +179,18 @@ const pos=randomPos()
 heart.style.left=pos.x+"%"
 heart.style.top=pos.y+"%"
 
+let move=setInterval(()=>{
+heart.style.left=Math.random()*90+"%"
+heart.style.top=Math.random()*70+"%"
+},heartSpeed)
+
 heart.onclick=()=>{
+clearInterval(move)
 heart.remove()
 hearts++
+
+heartSpeed-=100
+if(heartSpeed<150){heartSpeed=150}
 
 if(hearts>=5){
 document.getElementById("game1").classList.add("hidden")
@@ -197,11 +201,13 @@ spawnHeart()
 }
 
 document.getElementById("area1").appendChild(heart)
+
 }
 
 spawnHeart()
 
 function spawnSpider(){
+
 const spider=document.createElement("div")
 spider.className="item"
 spider.innerHTML="🕷️"
@@ -211,9 +217,18 @@ const pos=randomPos()
 spider.style.left=pos.x+"%"
 spider.style.top=pos.y+"%"
 
+let move=setInterval(()=>{
+spider.style.left=Math.random()*90+"%"
+spider.style.top=Math.random()*70+"%"
+},spiderSpeed)
+
 spider.onclick=()=>{
+clearInterval(move)
 spider.remove()
 spiders++
+
+spiderSpeed-=100
+if(spiderSpeed<150){spiderSpeed=150}
 
 if(spiders>=5){
 document.getElementById("game2").classList.add("hidden")
@@ -225,23 +240,45 @@ spawnSpider()
 }
 
 document.getElementById("area2").appendChild(spider)
+
 }
 
 spawnSpider()
 
 function createHearts(){
 
-for(let i=0;i<6;i++){
+document.getElementById("area3").innerHTML=""
+
+let total=6
+let opacity=1
+
+if(level==2){
+total=12
+opacity=0.7
+document.getElementById("nivelTexto").innerText="Juego 3 - Nivel 2"
+}
+
+if(level==3){
+total=25
+opacity=0.2
+document.getElementById("nivelTexto").innerText="Juego 3 - Nivel 3"
+}
+
+let correct=Math.floor(Math.random()*total)
+
+for(let i=0;i<total;i++){
 
 const h=document.createElement("div")
 h.className="item"
 
-if(i==3){
+if(i==correct){
 h.innerHTML="💖"
-h.onclick=finishGames
+h.onclick=nextLevel
 }else{
 h.innerHTML="❤️"
 }
+
+h.style.opacity=opacity
 
 const pos=randomPos()
 
@@ -250,6 +287,18 @@ h.style.top=pos.y+"%"
 
 document.getElementById("area3").appendChild(h)
 
+}
+
+}
+
+function nextLevel(){
+
+level++
+
+if(level>3){
+finishGames()
+}else{
+createHearts()
 }
 
 }
