@@ -5,400 +5,135 @@
 <title>Juego</title>
 
 <style>
-
-body{
-margin:0;
-font-family:sans-serif;
-overflow:hidden;
-background:black;
-color:white;
-text-align:center;
-}
-
-.screen{
-position:absolute;
-width:100%;
-height:100%;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-}
-
-.hidden{
-display:none;
-}
-
-#timer{
-position:fixed;
-top:10px;
-right:15px;
-font-size:20px;
-font-weight:bold;
-}
-
-.item{
-position:absolute;
-font-size:30px;
-cursor:pointer;
-}
-
-.hiddenHeart{
-position:absolute;
-font-size:28px;
-cursor:pointer;
-opacity:0.4;
-}
-
-#final{
-background:url("espiderman.jpg") center/cover no-repeat;
-}
-
-.message{
-font-size:28px;
-max-width:700px;
-line-height:1.5;
-padding:20px;
-}
-
-.touch{
-position:fixed;
-bottom:15px;
-left:50%;
-transform:translateX(-50%);
-font-size:18px;
-font-weight:bold;
-}
-
-.falling{
-position:absolute;
-top:-50px;
-font-size:22px;
-animation:fall linear forwards;
-}
-
-@keyframes fall{
-to{
-transform:translateY(110vh);
-}
-}
-
-.explosion{
-position:absolute;
-font-size:30px;
-animation:boom 1s forwards;
-}
-
-@keyframes boom{
-to{
-transform:scale(2);
-opacity:0;
-}
-}
-
+body{margin:0;font-family:sans-serif;overflow:hidden;background:black;color:white;text-align:center;}
+.screen{position:absolute;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+.hidden{display:none;}
+#contador{position:fixed;top:15px;right:20px;font-size:22px;font-weight:bold;color:white;z-index:10;}
+.item{position:absolute;font-size:30px;cursor:pointer;}
+.hiddenHeart{position:absolute;font-size:28px;cursor:pointer;opacity:0.4;}
+#final{background:url("espiderman.jpg") center/cover no-repeat; background-size:cover;}
+.message{font-size:22px;max-width:700px;line-height:1.6;padding:20px;color:white;}
+.touch{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);font-size:18px;font-weight:bold;}
+.falling{position:absolute;font-size:22px;animation:fall linear forwards;}
+@keyframes fall{to{transform:translateY(110vh);}}
+.explosion{position:absolute;font-size:30px;animation:boom 1s forwards;}
+@keyframes boom{to{transform:scale(2);opacity:0;}}
 </style>
 </head>
 
 <body>
 
-<div id="timer">Tiempo: 0</div>
-
-<!-- JUEGO 1 -->
+<div id="contador">❤️ 0 / 10</div>
 
 <div id="game1" class="screen">
 <h2>Atrapa 10 corazones ❤️</h2>
 <p>Se moverán cada vez más rápido 😈</p>
 </div>
 
-<!-- JUEGO 2 -->
-
 <div id="game2" class="screen hidden">
 <h2>Atrapa 10 arañas 🕷</h2>
 <p>También aumentarán la velocidad 😈</p>
 </div>
-
-<!-- JUEGO 3 -->
 
 <div id="game3" class="screen hidden">
 <h2>Encuentra los corazones escondidos 💙</h2>
 <p>Hay 3 niveles...</p>
 </div>
 
-<!-- FINAL -->
-
 <div id="final" class="screen hidden">
-
 <div class="message">
-Quería hacer algo diferente para ti.<br><br>
-Algo pequeño pero hecho con tiempo,<br>
-porque me gusta verte sonreír.<br><br>
-Si llegaste hasta aquí es porque superaste todo,<br>
-y ahora solo queda que toques la pantalla.
+<h2>Mi niña 💖</h2>
+<p>
+Solo quería que supieras algo muy importante para mí. Desde que llegaste a mi vida todo se siente diferente, más bonito y más especial. Puede que a veces no encuentre las palabras perfectas, pero quiero que siempre recuerdes que eres alguien muy importante para mí.
+</p>
+<p>
+Tu sonrisa, tu forma de ser y la manera en que hablas conmigo hacen que incluso los días normales se sientan mejores. Me siento muy afortunado de haberte encontrado en este mundo tan grande.
+</p>
+<p>
+Así que nunca olvides esto: eres especial, eres importante y haces mi mundo mucho más bonito con solo existir. ❤️
+</p>
+<p>
+Gracias por existir y por hacerme sentir que cada día vale la pena. 🌹
+</p>
 </div>
-
-<div class="touch">Toca la pantalla</div>
-
+<div class="touch">Toca la pantalla 🕷️</div>
 </div>
 
 <audio id="music" src="Beso.mp3"></audio>
 
 <script>
+let hearts=0, spiders=0, found=0, nivel=1;
+let heartSpeed=800, spiderSpeed=800;
+const words=["hermosa","linda","increíble","especial","maravillosa"];
 
-let hearts=0
-let spiders=0
-let found=0
-let nivel=1
-
-let heartSpeed=800
-let spiderSpeed=800
-
-let time=0
-let timerInterval
-
-function startTimer(){
-time=0
-timerInterval=setInterval(()=>{
-time++
-document.getElementById("timer").innerText="Tiempo: "+time
-},1000)
-}
-
-function stopTimer(){
-clearInterval(timerInterval)
-}
-
-function randomPos(){
-return{
-x:Math.random()*90,
-y:Math.random()*70
-}
-}
+function randomPos(){return{x:Math.random()*90,y:Math.random()*70}}
 
 function spawnHeart(){
-
-const heart=document.createElement("div")
-heart.className="item"
-heart.innerHTML="❤️"
-
-const pos=randomPos()
-
-heart.style.left=pos.x+"%"
-heart.style.top=pos.y+"%"
-
-let move=setInterval(()=>{
-heart.style.left=Math.random()*90+"%"
-heart.style.top=Math.random()*70+"%"
-},heartSpeed)
-
+const heart=document.createElement("div"); heart.className="item"; heart.innerHTML="❤️";
+const pos=randomPos(); heart.style.left=pos.x+"%"; heart.style.top=pos.y+"%";
+let move=setInterval(()=>{heart.style.left=Math.random()*90+"%";heart.style.top=Math.random()*70+"%"},heartSpeed);
 heart.onclick=()=>{
-
-clearInterval(move)
-heart.remove()
-
-hearts++
-
-heartSpeed-=60
-if(heartSpeed<150)heartSpeed=150
-
-if(hearts>=10){
-
-document.getElementById("game1").classList.add("hidden")
-document.getElementById("game2").classList.remove("hidden")
-
-spawnSpider()
-
-}else{
-
-spawnHeart()
-
-}
-
-}
-
+clearInterval(move); heart.remove(); hearts++;
+document.getElementById("contador").innerText="❤️ "+hearts+" / 10";
+heartSpeed-=60; if(heartSpeed<150) heartSpeed=150;
+if(hearts>=10){document.getElementById("game1").classList.add("hidden"); document.getElementById("game2").classList.remove("hidden"); document.getElementById("contador").innerText="🕷 0 / 10"; spawnSpider();}
+else{spawnHeart()}}
 document.body.appendChild(heart)
-
 }
 
 function spawnSpider(){
-
-const spider=document.createElement("div")
-spider.className="item"
-spider.innerHTML="🕷"
-
-const pos=randomPos()
-
-spider.style.left=pos.x+"%"
-spider.style.top=pos.y+"%"
-
-let move=setInterval(()=>{
-spider.style.left=Math.random()*90+"%"
-spider.style.top=Math.random()*70+"%"
-},spiderSpeed)
-
+const spider=document.createElement("div"); spider.className="item"; spider.innerHTML="🕷";
+const pos=randomPos(); spider.style.left=pos.x+"%"; spider.style.top=pos.y+"%";
+let move=setInterval(()=>{spider.style.left=Math.random()*90+"%";spider.style.top=Math.random()*70+"%"},spiderSpeed);
 spider.onclick=()=>{
-
-clearInterval(move)
-spider.remove()
-
-spiders++
-
-spiderSpeed-=60
-if(spiderSpeed<150)spiderSpeed=150
-
-if(spiders>=10){
-
-stopTimer()
-
-document.getElementById("game2").classList.add("hidden")
-document.getElementById("game3").classList.remove("hidden")
-
-spawnHiddenHeart()
-
-}else{
-
-spawnSpider()
-
-}
-
-}
-
+clearInterval(move); spider.remove(); spiders++;
+document.getElementById("contador").innerText="🕷 "+spiders+" / 10";
+spiderSpeed-=60; if(spiderSpeed<150) spiderSpeed=150;
+if(spiders>=10){document.getElementById("game2").classList.add("hidden"); document.getElementById("game3").classList.remove("hidden"); spawnHiddenHeart();}
+else{spawnSpider()}}
 document.body.appendChild(spider)
-
 }
 
 function spawnHiddenHeart(){
-
-const heart=document.createElement("div")
-heart.className="hiddenHeart"
-heart.innerHTML="💙"
-
-let x=Math.random()*95
-let y=Math.random()*95
-
-if(nivel==2){
-x=Math.random()*98
-y=Math.random()*98
-}
-
-if(nivel==3){
-x=Math.random()*99
-y=Math.random()*99
-heart.style.opacity="0.15"
-}
-
-heart.style.left=x+"%"
-heart.style.top=y+"%"
-
+const heart=document.createElement("div"); heart.className="hiddenHeart"; heart.innerHTML="💙";
+let x=Math.random()*95; let y=Math.random()*95;
+if(nivel==2){x=Math.random()*98;y=Math.random()*98;}
+if(nivel==3){x=Math.random()*99;y=Math.random()*99; heart.style.opacity="0.15"}
+heart.style.left=x+"%"; heart.style.top=y+"%";
 heart.onclick=()=>{
-
-heart.remove()
-
-found++
-
+heart.remove(); found++;
 if(found>=5){
-
-if(nivel==1){
-nivel=2
-found=0
-alert("Nivel 2 😈")
-spawnHiddenHeart()
-return
-}
-
-if(nivel==2){
-nivel=3
-found=0
-alert("Nivel 3 💀")
-spawnHiddenHeart()
-return
-}
-
-if(nivel==3){
-
-document.getElementById("game3").classList.add("hidden")
-document.getElementById("final").classList.remove("hidden")
-
-}
-
-}else{
-
-spawnHiddenHeart()
-
-}
-
-}
-
+if(nivel==1){nivel=2;found=0;alert("Nivel 2 😈"); spawnHiddenHeart(); return;}
+if(nivel==2){nivel=3;found=0;alert("Nivel 3 💀"); spawnHiddenHeart(); return;}
+if(nivel==3){document.getElementById("game3").classList.add("hidden"); document.getElementById("final").classList.remove("hidden");}
+}else{spawnHiddenHeart()}}
 document.body.appendChild(heart)
-
 }
-
-const words=["hermosa","linda","increíble","especial","maravillosa"]
 
 function explosion(x,y){
-
 for(let i=0;i<25;i++){
-
-const e=document.createElement("div")
-
-const emojis=["🕷","🕸","❤️","💙"]
-
-e.className="explosion"
-e.innerHTML=emojis[Math.floor(Math.random()*emojis.length)]
-
-e.style.left=x+"px"
-e.style.top=y+"px"
-
-document.body.appendChild(e)
-
-setTimeout(()=>e.remove(),1000)
-
-}
-
+const e=document.createElement("div");
+const emojis=["🕷","🕸","❤️","💙"];
+e.className="explosion"; e.innerHTML=emojis[Math.floor(Math.random()*emojis.length)];
+e.style.left=x+"px"; e.style.top=y+"px";
+document.body.appendChild(e); setTimeout(()=>e.remove(),1000)}
 }
 
 function fallingWords(){
-
 setInterval(()=>{
-
-const w=document.createElement("div")
-w.className="falling"
-
-if(Math.random()>0.5){
-
-const emojis=["🕷","🕸","❤️","💙"]
-w.innerHTML=emojis[Math.floor(Math.random()*emojis.length)]
-
-}else{
-
-w.innerHTML=words[Math.floor(Math.random()*words.length)]
-
-}
-
-w.style.left=Math.random()*100+"%"
-w.style.animationDuration=5+Math.random()*5+"s"
-
-document.body.appendChild(w)
-
-setTimeout(()=>w.remove(),10000)
-
-},800)
-
+const w=document.createElement("div"); w.className="falling";
+if(Math.random()>0.5){const emojis=["🕷","🕸","❤️","💙"]; w.innerHTML=emojis[Math.floor(Math.random()*emojis.length)]}
+else{w.innerHTML=words[Math.floor(Math.random()*words.length)]}
+w.style.left=Math.random()*100+"%";
+w.style.animationDuration=5+Math.random()*5+"s";
+document.body.appendChild(w); setTimeout(()=>w.remove(),10000)},800)
 }
 
 document.getElementById("final").onclick=(e)=>{
-
-explosion(e.clientX,e.clientY)
-
-document.getElementById("music").play()
-
-fallingWords()
-
+explosion(e.clientX,e.clientY); document.getElementById("music").play(); fallingWords()
 }
 
-startTimer()
-spawnHeart()
-
+spawnHeart();
 </script>
-
 </body>
 </html>
