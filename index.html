@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi niña ❤️</title>
+
+<style>
+body{
+margin:0;
+background:#b30000;
+overflow:hidden;
+font-family:Arial, sans-serif;
+color:white;
+text-align:center;
+}
+
+.message{
+position:relative;
+max-width:700px;
+margin:80px auto;
+padding:20px;
+font-size:18px;
+line-height:1.6;
+z-index:2;
+}
+
+.spider{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:200px;
+animation:float 6s ease-in-out infinite;
+z-index:1;
+opacity:0.9;
+}
+
+@keyframes float{
+0%{ transform:translate(-50%,-50%) translateX(-40px); }
+50%{ transform:translate(-50%,-50%) translateX(40px); }
+100%{ transform:translate(-50%,-50%) translateX(-40px); }
+}
+
+.fall{
+position:fixed;
+top:-30px;
+font-size:22px;
+animation:fall linear infinite;
+z-index:3;
+pointer-events:none;
+}
+
+@keyframes fall{
+to{
+transform:translateY(110vh);
+}
+}
+
+.burst{
+position:fixed;
+font-size:30px;
+pointer-events:none;
+animation:explode 1.2s forwards;
+z-index:5;
+}
+
+@keyframes explode{
+from{
+transform:scale(0.5);
+opacity:1;
+}
+to{
+transform:translate(var(--x),var(--y)) scale(1.5);
+opacity:0;
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="message">
+
+<h2>Mi niña 💖</h2>
+
+<p>
+Solo quería que supieras algo que para mí es muy importante decirte. Desde que llegaste a mi vida todo se siente diferente, más bonito y más especial. A veces puede que no encuentre las palabras perfectas para explicarlo, pero quiero que recuerdes siempre que eres alguien muy importante para mí. Tu forma de ser, tu sonrisa, la manera en que hablas conmigo y cómo haces que incluso los días normales se sientan mejores… todo eso significa mucho para mí.
+</p>
+
+<p>
+Me gusta pensar que en este mundo tan grande tuve la suerte de encontrarte. Porque no todos los días aparece una persona que te haga sentir tranquilo, feliz y querido al mismo tiempo. Y aunque a veces no lo diga tanto como debería, quiero que sepas que te aprecio muchísimo, que me encanta hablar contigo, reír contigo y simplemente saber que estás ahí.
+</p>
+
+<p>
+Así que nunca olvides esto: eres especial, eres importante y haces mi mundo un poquito más bonito con solo existir. ❤️
+</p>
+
+</div>
+
+<img src="espiderman.jpg" class="spider">
+
+<script>
+
+const items = [
+"🕷️","🕸️","❤️","💙",
+"Te quiero",
+"Mi niña",
+"Mi amor",
+"Preciosa",
+"Linda",
+"Bonita",
+"Eres especial",
+"Te adoro"
+];
+
+function createFall(){
+const element=document.createElement("div");
+element.classList.add("fall");
+element.innerHTML = items[Math.floor(Math.random()*items.length)];
+element.style.left=Math.random()*100+"vw";
+element.style.animationDuration=(10+Math.random()*6)+"s";
+document.body.appendChild(element);
+setTimeout(()=>{
+element.remove();
+},16000);
+}
+
+setInterval(createFall,800);
+
+document.addEventListener("click",burstEffect);
+document.addEventListener("touchstart",burstEffect);
+
+function burstEffect(e){
+
+const x = e.touches ? e.touches[0].clientX : e.clientX;
+const y = e.touches ? e.touches[0].clientY : e.clientY;
+
+const burstItems = ["🕷️","🕸️","❤️","💙"];
+
+for(let i=0;i<16;i++){
+
+const part=document.createElement("div");
+part.classList.add("burst");
+part.innerHTML=burstItems[Math.floor(Math.random()*burstItems.length)];
+
+part.style.left=x+"px";
+part.style.top=y+"px";
+
+const moveX=(Math.random()*240-120)+"px";
+const moveY=(Math.random()*240-120)+"px";
+
+part.style.setProperty("--x",moveX);
+part.style.setProperty("--y",moveY);
+
+document.body.appendChild(part);
+
+setTimeout(()=>{
+part.remove();
+},1200);
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
