@@ -9,14 +9,14 @@ body{margin:0;font-family:sans-serif;overflow:hidden;background:black;color:whit
 .screen{position:absolute;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;}
 .hidden{display:none;}
 #contador{position:fixed;top:15px;right:20px;font-size:22px;font-weight:bold;color:white;z-index:10;}
-.item{position:absolute;font-size:30px;cursor:pointer;}
-.hiddenHeart{position:absolute;font-size:28px;cursor:pointer;opacity:0.4;}
+.item{position:absolute;font-size:50px;cursor:pointer;}  /* Tamaño aumentado */
+.hiddenHeart{position:absolute;font-size:45px;cursor:pointer;opacity:0.4;} /* Tamaño aumentado */
 #final{background:url("espiderman.jpg") center/cover no-repeat; background-size:cover;}
 .message{font-size:22px;max-width:700px;line-height:1.6;padding:20px;color:white;}
 .touch{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);font-size:18px;font-weight:bold;}
 .falling{position:absolute;font-size:22px;animation:fall linear forwards;}
 @keyframes fall{to{transform:translateY(110vh);}}
-.explosion{position:absolute;font-size:30px;animation:boom 1s forwards;}
+.explosion{position:absolute;font-size:35px;animation:boom 1s forwards;} /* Explosión un poco más grande */
 @keyframes boom{to{transform:scale(2);opacity:0;}}
 </style>
 </head>
@@ -63,77 +63,101 @@ Gracias por existir y por hacerme sentir que cada día vale la pena. 🌹
 
 <script>
 let hearts=0, spiders=0, found=0, nivel=1;
-let heartSpeed=800, spiderSpeed=800;
+let heartSpeed=1800, spiderSpeed=1800;
 const words=["hermosa","linda","increíble","especial","maravillosa"];
 
-function randomPos(){return{x:Math.random()*90,y:Math.random()*70}}
+function randomPos(){return {x:Math.random()*90, y:Math.random()*70}}
 
+// ========== CORAZONES ==========
 function spawnHeart(){
-const heart=document.createElement("div"); heart.className="item"; heart.innerHTML="❤️";
-const pos=randomPos(); heart.style.left=pos.x+"%"; heart.style.top=pos.y+"%";
-let move=setInterval(()=>{heart.style.left=Math.random()*90+"%";heart.style.top=Math.random()*70+"%"},heartSpeed);
-heart.onclick=()=>{
-clearInterval(move); heart.remove(); hearts++;
-document.getElementById("contador").innerText="❤️ "+hearts+" / 10";
-heartSpeed-=60; if(heartSpeed<150) heartSpeed=150;
-if(hearts>=10){document.getElementById("game1").classList.add("hidden"); document.getElementById("game2").classList.remove("hidden"); document.getElementById("contador").innerText="🕷 0 / 10"; spawnSpider();}
-else{spawnHeart()}}
-document.body.appendChild(heart)
+    const heart=document.createElement("div");
+    heart.className="item"; heart.innerHTML="❤️";
+    const pos=randomPos(); heart.style.left=pos.x+"%"; heart.style.top=pos.y+"%";
+    let move=setInterval(()=>{heart.style.left=Math.random()*90+"%"; heart.style.top=Math.random()*70+"%"},heartSpeed);
+    heart.onclick=function(){
+        clearInterval(move); heart.remove(); hearts++;
+        document.getElementById("contador").innerText="❤️ "+hearts+" / 10";
+        heartSpeed-=60; if(heartSpeed<300) heartSpeed=300;
+        if(hearts>=10){
+            document.getElementById("game1").classList.add("hidden");
+            document.getElementById("game2").classList.remove("hidden");
+            document.getElementById("contador").innerText="🕷 0 / 10"; spawnSpider();
+        } else { spawnHeart(); }
+    }
+    document.body.appendChild(heart);
 }
 
+// ========== ARAÑAS ==========
 function spawnSpider(){
-const spider=document.createElement("div"); spider.className="item"; spider.innerHTML="🕷";
-const pos=randomPos(); spider.style.left=pos.x+"%"; spider.style.top=pos.y+"%";
-let move=setInterval(()=>{spider.style.left=Math.random()*90+"%";spider.style.top=Math.random()*70+"%"},spiderSpeed);
-spider.onclick=()=>{
-clearInterval(move); spider.remove(); spiders++;
-document.getElementById("contador").innerText="🕷 "+spiders+" / 10";
-spiderSpeed-=60; if(spiderSpeed<150) spiderSpeed=150;
-if(spiders>=10){document.getElementById("game2").classList.add("hidden"); document.getElementById("game3").classList.remove("hidden"); spawnHiddenHeart();}
-else{spawnSpider()}}
-document.body.appendChild(spider)
+    const spider=document.createElement("div");
+    spider.className="item"; spider.innerHTML="🕷";
+    const pos=randomPos(); spider.style.left=pos.x+"%"; spider.style.top=pos.y+"%";
+    let move=setInterval(()=>{spider.style.left=Math.random()*90+"%"; spider.style.top=Math.random()*70+"%"},spiderSpeed);
+    spider.onclick=function(){
+        clearInterval(move); spider.remove(); spiders++;
+        document.getElementById("contador").innerText="🕷 "+spiders+" / 10";
+        spiderSpeed-=60; if(spiderSpeed<300) spiderSpeed=300;
+        if(spiders>=10){
+            document.getElementById("game2").classList.add("hidden");
+            document.getElementById("game3").classList.remove("hidden");
+            spawnHiddenHeart();
+        } else { spawnSpider(); }
+    }
+    document.body.appendChild(spider);
 }
 
+// ========== CORAZONES ESCONDIDOS POR NIVELES ==========
 function spawnHiddenHeart(){
-const heart=document.createElement("div"); heart.className="hiddenHeart"; heart.innerHTML="💙";
-let x=Math.random()*95; let y=Math.random()*95;
-if(nivel==2){x=Math.random()*98;y=Math.random()*98;}
-if(nivel==3){x=Math.random()*99;y=Math.random()*99; heart.style.opacity="0.15"}
-heart.style.left=x+"%"; heart.style.top=y+"%";
-heart.onclick=()=>{
-heart.remove(); found++;
-if(found>=5){
-if(nivel==1){nivel=2;found=0;alert("Nivel 2 😈"); spawnHiddenHeart(); return;}
-if(nivel==2){nivel=3;found=0;alert("Nivel 3 💀"); spawnHiddenHeart(); return;}
-if(nivel==3){document.getElementById("game3").classList.add("hidden"); document.getElementById("final").classList.remove("hidden");}
-}else{spawnHiddenHeart()}}
-document.body.appendChild(heart)
+    const heart=document.createElement("div");
+    heart.className="hiddenHeart"; heart.innerHTML="💙";
+    let x=Math.random()*95; let y=Math.random()*95;
+    if(nivel==2){x=Math.random()*98;y=Math.random()*98;}
+    if(nivel==3){x=Math.random()*99;y=Math.random()*99; heart.style.opacity="0.15";}
+    heart.style.left=x+"%"; heart.style.top=y+"%";
+    heart.onclick=function(){
+        heart.remove(); found++;
+        if(found>=5){
+            if(nivel==1){nivel=2; found=0; alert("Nivel 2 😈"); spawnHiddenHeart(); return;}
+            if(nivel==2){nivel=3; found=0; alert("Nivel 3 💀"); spawnHiddenHeart(); return;}
+            if(nivel==3){document.getElementById("game3").classList.add("hidden"); document.getElementById("final").classList.remove("hidden");}
+        } else { spawnHiddenHeart(); }
+    }
+    document.body.appendChild(heart);
 }
 
+// ========== EXPLOSION ==========
 function explosion(x,y){
-for(let i=0;i<25;i++){
-const e=document.createElement("div");
-const emojis=["🕷","🕸","❤️","💙"];
-e.className="explosion"; e.innerHTML=emojis[Math.floor(Math.random()*emojis.length)];
-e.style.left=x+"px"; e.style.top=y+"px";
-document.body.appendChild(e); setTimeout(()=>e.remove(),1000)}
+    for(let i=0;i<25;i++){
+        const e=document.createElement("div");
+        const emojis=["🕷","🕸","❤️","💙"];
+        e.className="explosion"; e.innerHTML=emojis[Math.floor(Math.random()*emojis.length)];
+        e.style.left=x+"px"; e.style.top=y+"px";
+        document.body.appendChild(e); setTimeout(()=>e.remove(),1000);
+    }
 }
 
+// ========== PALABRAS CAÍDAS ==========
 function fallingWords(){
-setInterval(()=>{
-const w=document.createElement("div"); w.className="falling";
-if(Math.random()>0.5){const emojis=["🕷","🕸","❤️","💙"]; w.innerHTML=emojis[Math.floor(Math.random()*emojis.length)]}
-else{w.innerHTML=words[Math.floor(Math.random()*words.length)]}
-w.style.left=Math.random()*100+"%";
-w.style.animationDuration=5+Math.random()*5+"s";
-document.body.appendChild(w); setTimeout(()=>w.remove(),10000)},800)
+    setInterval(()=>{
+        const w=document.createElement("div"); w.className="falling";
+        if(Math.random()>0.5){const emojis=["🕷","🕸","❤️","💙"]; w.innerHTML=emojis[Math.floor(Math.random()*emojis.length)]}
+        else{w.innerHTML=words[Math.floor(Math.random()*words.length)]}
+        w.style.left=Math.random()*100+"%";
+        w.style.animationDuration=5+Math.random()*5+"s";
+        document.body.appendChild(w); setTimeout(()=>w.remove(),10000)
+    },800);
 }
 
+// ========== TOCAR PANTALLA FINAL ==========
 document.getElementById("final").onclick=(e)=>{
-explosion(e.clientX,e.clientY); document.getElementById("music").play(); fallingWords()
+    explosion(e.clientX,e.clientY); 
+    document.getElementById("music").play(); 
+    fallingWords();
 }
 
+// ========== INICIO ==========
 spawnHeart();
 </script>
+<audio id="music" src="Beso.mp3"></audio>
 </body>
 </html>
