@@ -11,13 +11,13 @@ body{margin:0;font-family:sans-serif;overflow:hidden;background:black;color:whit
 #contador{position:fixed;top:15px;right:20px;font-size:22px;font-weight:bold;color:white;z-index:10;}
 .item{position:absolute;font-size:50px;cursor:pointer;}  /* Tamaño aumentado */
 .hiddenHeart{position:absolute;font-size:45px;cursor:pointer;opacity:0.4;} /* Tamaño aumentado */
-#final{background:url("espiderman.jpg") center/cover no-repeat; background-size:cover;}
-.message{font-size:22px;max-width:700px;line-height:1.6;padding:20px;color:white;}
-.touch{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);font-size:18px;font-weight:bold;}
+#final{background:red;} /* Fondo rojo */
+.message{font-size:22px;max-width:700px;line-height:1.6;padding:20px;color:black;} /* Texto negro */
+.touch{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);font-size:18px;font-weight:bold;color:black;}
 .falling{position:absolute;font-size:22px;animation:fall linear forwards;}
 @keyframes fall{to{transform:translateY(110vh);}}
-.explosion{position:absolute;font-size:35px;animation:boom 1s forwards;} /* Explosión un poco más grande */
-@keyframes boom{to{transform:scale(2);opacity:0;}}
+.explosion{position:absolute;font-size:45px;animation:boom 1.2s forwards;} /* Explosión más notable */
+@keyframes boom{to{transform:scale(2.2);opacity:0;}}
 </style>
 </head>
 
@@ -127,12 +127,12 @@ function spawnHiddenHeart(){
 
 // ========== EXPLOSION ==========
 function explosion(x,y){
-    for(let i=0;i<25;i++){
+    for(let i=0;i<30;i++){   // Más partículas
         const e=document.createElement("div");
         const emojis=["🕷","🕸","❤️","💙"];
         e.className="explosion"; e.innerHTML=emojis[Math.floor(Math.random()*emojis.length)];
         e.style.left=x+"px"; e.style.top=y+"px";
-        document.body.appendChild(e); setTimeout(()=>e.remove(),1000);
+        document.body.appendChild(e); setTimeout(()=>e.remove(),1200);
     }
 }
 
